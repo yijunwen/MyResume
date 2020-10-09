@@ -43,6 +43,12 @@ public class UserServlet extends BaseServlet {
     }
 
     public void login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String captchaCode = (String) request.getSession().getAttribute("captchaCode");
+        String captcha = request.getParameter("captcha");
+        if (!captchaCode.equals(captcha)) {
+            forwardError(request, response, "验证码错误！");
+            return;
+        }
         User user = new User();
         BeanUtils.populate(user, request.getParameterMap());
         if (((UserService) service).login(user) != null) {
@@ -67,6 +73,8 @@ public class UserServlet extends BaseServlet {
 
         // 生成验证码字符串
         String code = dk.createText();
+
+        request.getSession().setAttribute("captchaCode", code.toLowerCase());
 
         // 生成验证码图片
         BufferedImage image = dk.createImage(code);
