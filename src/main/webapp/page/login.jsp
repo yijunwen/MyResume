@@ -25,12 +25,13 @@
                                autofocus>
                     </div>
                 </div>
+                <input type="hidden" name="password">
                 <div class="input-group form-group">
                         <span class="input-group-addon">
                             <i class="material-icons">lock</i>
                         </span>
                     <div class="form-line">
-                        <input type="password" class="form-control" name="password" maxlength="20" placeholder="密码"
+                        <input id="originPassword" type="password" class="form-control"  maxlength="20" placeholder="密码"
                                required>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import com.yhaj.xr.dao.Userdao;
 import com.yhaj.xr.domain.User;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +15,22 @@ import java.util.List;
 public class UserDaoImpl extends BaseDaoImpl<User> implements Userdao {
     @Override
     public boolean save(User bean) {
-        return false;
+        String sql = "UPDATE user SET email = ?, password = ?, birthday = ?, photo = ?, intro = ?, name = ?, address = ?, phone = " +
+                "?, job = ?,trait = ?, interests = ? WHERE id = ? ";
+        List<Object> args = new ArrayList<>();
+        args.add(bean.getEmail());
+        args.add(bean.getPassword());
+        args.add(bean.getBirthday());
+        args.add(bean.getPhoto());
+        args.add(bean.getIntro());
+        args.add(bean.getName());
+        args.add(bean.getAddress());
+        args.add(bean.getPhone());
+        args.add(bean.getJob());
+        args.add(bean.getTrait());
+        args.add(bean.getInterests());
+        args.add(bean.getId());
+        return tpl.update(sql, args.toArray()) > 0;
     }
 
     @Override
@@ -28,7 +44,8 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements Userdao {
     }
 
     public User login(User user) {
-        String sql = "SELECT id, email, password FROM user WHERE email = ? and password = ? ";
+        String sql = "SELECT id, email, password, birthday, photo, intro, name, address, phone, job, trait, interests" +
+                " FROM user WHERE email = ? and password = ? ";
         List<User> users = tpl.query(sql, new BeanPropertyRowMapper<>(User.class), user.getEmail(),
                 user.getPassword());
         return users.isEmpty() ? null : users.get(0);
