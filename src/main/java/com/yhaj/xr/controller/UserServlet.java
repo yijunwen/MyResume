@@ -2,8 +2,13 @@ package com.yhaj.xr.controller;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import com.yhaj.xr.domain.Award;
+import com.yhaj.xr.domain.Skill;
 import com.yhaj.xr.domain.User;
-import com.yhaj.xr.service.UserService;
+import com.yhaj.xr.service.*;
+import com.yhaj.xr.service.impl.AwardServiceImpl;
+import com.yhaj.xr.service.impl.SkillServiceImpl;
+import com.yhaj.xr.service.impl.WebsiteServiceImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -27,7 +32,25 @@ import java.util.*;
  */
 @WebServlet("/user/*")
 public class UserServlet extends BaseServlet {
+    private SkillService skillService = new SkillServiceImpl();
+    private AwardService awardService = new AwardServiceImpl();
+    private WebsiteService websiteService = new WebsiteServiceImpl();
 
+    public void front(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        User user = (User) service.list().get(0);
+        String[] trait = user.getTrait().split(",");
+        String[] Interests = user.getInterests().split(",");
+        List<Skill> skills = skillService.list();
+        List<Award> awards = awardService.list();
+        String footer = websiteService.list().get(0).getFooter();
+        request.setAttribute("user", user);
+        request.setAttribute("trait", trait);
+        request.setAttribute("Interests", Interests);
+        request.setAttribute("skills", skills);
+        request.setAttribute("awards", awards);
+        request.setAttribute("footer", footer);
+        forward(request, response, "front/user.jsp");
+    }
     @Override
     public void admin(HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = (User) request.getSession().getAttribute("user");

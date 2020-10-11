@@ -35,12 +35,14 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements Userdao {
 
     @Override
     public User get(Integer id) {
-        return null;
+        String sql = "SELECT  id, email, password, birthday, photo, intro, name, address, phone, job, trait, interests FROM user WHERE id = ? ";
+        return tpl.queryForObject(sql,new BeanPropertyRowMapper<>(User.class),id);
     }
 
     @Override
     public List<User> list() {
-        return null;
+        String sql = "SELECT  id, email, password, birthday, photo, intro, name, address, phone, job, trait, interests FROM user ";
+        return tpl.query(sql, new BeanPropertyRowMapper<>(User.class));
     }
 
     public User login(User user) {
