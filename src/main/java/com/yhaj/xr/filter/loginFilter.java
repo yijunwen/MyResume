@@ -21,9 +21,10 @@ public class loginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
         String uri = request.getRequestURI();
-        if (uri.contains("/asset/")) {
+        if (uri.contains("/asset/") || uri.contains("/contact/save")) {
             chain.doFilter(request, response);
-        } else if (uri.contains("/admin") || uri.contains("/save") || uri.contains("/remove") || uri.contains("/password")) {
+        } else if (uri.contains("/admin") || uri.contains("/save") || uri.contains("/remove") || uri.contains(
+                "/password")) {
             Object user = request.getSession().getAttribute("user");
             if (user == null) {
                 response.sendRedirect(request.getContextPath() + "/page/login.jsp");

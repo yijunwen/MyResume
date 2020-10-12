@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <title>小码哥简历管理-教育信息</title>
+    <title>文毅俊简历管理-专业技能</title>
     <%@ include file="common/head.jsp" %>
 </head>
 

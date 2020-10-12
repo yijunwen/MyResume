@@ -13,4 +13,5 @@ import java.util.Date;
 public class BaseBean {
     private Integer id;
     private Date createdTime;
+
 }

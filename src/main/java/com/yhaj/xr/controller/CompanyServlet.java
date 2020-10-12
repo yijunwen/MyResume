@@ -27,8 +27,6 @@ import java.util.*;
 @WebServlet("/company/*")
 public class CompanyServlet extends BaseServlet {
 
-    //private CompanyService service = new CompanyServiceImpl();
-
     public void admin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Company> companies = service.list();
         request.setAttribute("companies", companies);

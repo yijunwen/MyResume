@@ -17,11 +17,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -35,6 +37,23 @@ public class UserServlet extends BaseServlet {
     private SkillService skillService = new SkillServiceImpl();
     private AwardService awardService = new AwardServiceImpl();
     private WebsiteService websiteService = new WebsiteServiceImpl();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException {
+        String uri = request.getRequestURI();
+        String[] cmps = uri.split("/");
+        String methodName = "/" + cmps[cmps.length - 1];
+        if (methodName.equals(request.getContextPath())) {
+            try {
+                front(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            super.doGet(request, response);
+        }
+    }
 
     public void front(HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = (User) service.list().get(0);
@@ -51,6 +70,7 @@ public class UserServlet extends BaseServlet {
         request.setAttribute("footer", footer);
         forward(request, response, "front/user.jsp");
     }
+
     @Override
     public void admin(HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = (User) request.getSession().getAttribute("user");

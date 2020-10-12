@@ -3,8 +3,13 @@ package com.yhaj.xr.controller;
 import com.yhaj.xr.domain.Award;
 import com.yhaj.xr.domain.Company;
 import com.yhaj.xr.domain.Project;
+import com.yhaj.xr.domain.User;
 import com.yhaj.xr.service.CompanyService;
+import com.yhaj.xr.service.UserService;
+import com.yhaj.xr.service.WebsiteService;
 import com.yhaj.xr.service.impl.CompanyServiceImpl;
+import com.yhaj.xr.service.impl.UserServiceImpl;
+import com.yhaj.xr.service.impl.WebsiteServiceImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -27,6 +32,15 @@ import java.util.*;
 public class ProjectServlet extends BaseServlet {
 
     private CompanyService companyService = new CompanyServiceImpl();
+    private UserService userService = new UserServiceImpl();
+    private WebsiteService websiteService = new WebsiteServiceImpl();
+
+    public void front(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute("user", userService.list().get(0));
+        request.setAttribute("projects", service.list());
+        request.setAttribute("footer", websiteService.list().get(0).getFooter());
+        request.getRequestDispatcher("/WEB-INF/page/front/project.jsp").forward(request, response);
+    }
 
     public void admin(HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<Project> projects = service.list();
