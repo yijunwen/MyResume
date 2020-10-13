@@ -20,6 +20,7 @@ import org.apache.commons.io.FilenameUtils;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
@@ -130,14 +131,21 @@ public class UserServlet extends BaseServlet {
             //forwardError(request, response, "验证码错误！");
             result.put("success", false);
             result.put("msg", "验证码不正确");
-        }else {
+        } else {
             User user = new User();
-            BeanUtils.populate(user, request.getParameterMap());
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            BeanUtils.populate(user, parameterMap);
             User loginUser = ((UserService) service).login(user);
             if (loginUser != null) {
                 request.getSession().setAttribute("user", loginUser);
-                //redirect(request, response, "/user/admin");
-                result.put("success", true);
+                String rememberme = request.getParameter("rememberme");
+                if ("1".equals(rememberme)){
+                    Cookie cookie = new Cookie("JSESSIONID", request.getSession().getId());
+                    cookie.setMaxAge(3600 * 24 * 7);
+                    response.addCookie(cookie);
+                }
+                    //redirect(request, response, "/user/admin");
+                    result.put("success", true);
             } else {
                 //forwardError(request, response, "账户或密码错误！");
                 result.put("success", false);

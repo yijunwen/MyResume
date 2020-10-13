@@ -46,7 +46,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-8 p-t-5">
-                        <input type="checkbox" name="rememberme" id="rememberme" class="filled-in chk-col-pink">
+                        <input type="checkbox" value="1" name="rememberme" id="rememberme" class="filled-in chk-col-pink">
                         <label for="rememberme">记住密码</label>
                     </div>
                     <div class="col-xs-4">
@@ -77,7 +77,8 @@
         $.post('${ctx}/user/login', {
             email: $('[name=email]').val(),
             password: $('[name=password]').val(),
-            captcha: $('[name=captcha]').val()
+            captcha: $('[name=captcha]').val(),
+            rememberme: $('[name=rememberme]').val()
         }, function (data) {
             if (data.success) {
                 location.href = '${ctx}/user/admin'
