@@ -1,5 +1,6 @@
 package com.yhaj.xr.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.yhaj.xr.domain.Award;
@@ -120,21 +121,30 @@ public class UserServlet extends BaseServlet {
     }
 
     public void login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 设置编码
+        response.setContentType("text/json; charset=UTF-8");
         String captchaCode = (String) request.getSession().getAttribute("captchaCode");
         String captcha = request.getParameter("captcha");
+        Map<String, Object> result = new HashMap<>();
         if (!captcha.equals(captchaCode)) {
-            forwardError(request, response, "验证码错误！");
-            return;
+            //forwardError(request, response, "验证码错误！");
+            result.put("success", false);
+            result.put("msg", "验证码不正确");
+        }else {
+            User user = new User();
+            BeanUtils.populate(user, request.getParameterMap());
+            User loginUser = ((UserService) service).login(user);
+            if (loginUser != null) {
+                request.getSession().setAttribute("user", loginUser);
+                //redirect(request, response, "/user/admin");
+                result.put("success", true);
+            } else {
+                //forwardError(request, response, "账户或密码错误！");
+                result.put("success", false);
+                result.put("msg", "邮箱或密码不正确");
+            }
         }
-        User user = new User();
-        BeanUtils.populate(user, request.getParameterMap());
-        User loginUser = ((UserService) service).login(user);
-        if (loginUser != null) {
-            request.getSession().setAttribute("user", loginUser);
-            redirect(request, response, "/user/admin");
-        } else {
-            forwardError(request, response, "账户或密码错误！");
-        }
+        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) throws Exception {

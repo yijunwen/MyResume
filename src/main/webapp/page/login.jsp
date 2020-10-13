@@ -53,11 +53,6 @@
                         <button class="btn btn-block bg-pink waves-effect" type="submit">登录</button>
                     </div>
                 </div>
-                <!--div class="row m-t-15 m-b--20">
-                    <div class="col-xs-6">
-                        <a href="register.html">现在注册</a>
-                    </div>
-                </div-->
             </form>
         </div>
     </div>
@@ -68,7 +63,36 @@
 <script>
     addValidatorRules('.form-validation', function () {
         $('[name=password]').val(md5($('#originPassword').val()))
-        return true
+
+        // 先弹框
+        swal({
+            title: '正在登录中...',
+            text: ' ',
+            icon: 'info',
+            button: false,
+            closeOnClickOutside: false
+        })
+
+        // 利用AJAX发送请求给服务器
+        $.post('${ctx}/user/login', {
+            email: $('[name=email]').val(),
+            password: $('[name=password]').val(),
+            captcha: $('[name=captcha]').val()
+        }, function (data) {
+            if (data.success) {
+                location.href = '${ctx}/user/admin'
+            } else {
+                swal({
+                    title: "提示",
+                    text: data.msg,
+                    icon: 'error',
+                    dangerMode: true,
+                    buttons: false,
+                    timer: 1500
+                })
+            }
+        }, 'json')
+        return false
     })
 
     $('#captcha').click(function () {
