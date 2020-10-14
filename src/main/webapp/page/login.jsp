@@ -78,7 +78,7 @@
             email: $('[name=email]').val(),
             password: $('[name=password]').val(),
             captcha: $('[name=captcha]').val(),
-            rememberme: $('[name=rememberme]').val()
+            rememberme: $('[name=rememberme]').prop('checked')
         }, function (data) {
             if (data.success) {
                 location.href = '${ctx}/user/admin'

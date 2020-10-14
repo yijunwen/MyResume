@@ -10,6 +10,7 @@ import com.yhaj.xr.service.*;
 import com.yhaj.xr.service.impl.AwardServiceImpl;
 import com.yhaj.xr.service.impl.SkillServiceImpl;
 import com.yhaj.xr.service.impl.WebsiteServiceImpl;
+import com.yhaj.xr.util.Uploads;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -86,6 +87,7 @@ public class UserServlet extends BaseServlet {
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
         upload.setHeaderEncoding("UTF-8");
         List<FileItem> fileItems = upload.parseRequest(request);
+        User oldUser = (User) request.getSession().getAttribute("user");
         for (FileItem item : fileItems) {
             if (item.isFormField()) {
                 map.put(item.getFieldName(), item.getString("UTF-8"));
@@ -98,12 +100,12 @@ public class UserServlet extends BaseServlet {
                 String filePath = request.getServletContext().getRealPath(imgPath);
                 FileUtils.copyInputStreamToFile(item.getInputStream(), new File(filePath));
                 map.put("photo", imgPath);
+                Uploads.deleteOldImage(request, oldUser.getPhoto());
             }
         }
         User user = new User();
-        BeanUtils.populate(user, map);
-        User oldUser = (User) request.getSession().getAttribute("user");
         user.setPassword(oldUser.getPassword());
+        BeanUtils.populate(user, map);
         if (service.save(user)) {
             response.sendRedirect(request.getContextPath() + "/user/admin");
             request.getSession().setAttribute("user", user);
@@ -139,13 +141,13 @@ public class UserServlet extends BaseServlet {
             if (loginUser != null) {
                 request.getSession().setAttribute("user", loginUser);
                 String rememberme = request.getParameter("rememberme");
-                if ("1".equals(rememberme)){
+                if ("true".equals(rememberme)) {
                     Cookie cookie = new Cookie("JSESSIONID", request.getSession().getId());
                     cookie.setMaxAge(3600 * 24 * 7);
                     response.addCookie(cookie);
                 }
-                    //redirect(request, response, "/user/admin");
-                    result.put("success", true);
+                //redirect(request, response, "/user/admin");
+                result.put("success", true);
             } else {
                 //forwardError(request, response, "账户或密码错误！");
                 result.put("success", false);

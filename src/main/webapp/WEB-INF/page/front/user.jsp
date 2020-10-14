@@ -68,7 +68,7 @@
                                     <div class="progress-line crt-animate">
                                         <strong class="progress-title">${skill.name}</strong>
                                         <div class="progress-bar" data-text="${skill.levelString}"
-                                             data-value="(${skill.level}+1)*0.25"></div>
+                                             data-value="${(skill.level + 1) * 0.25}"></div>
                                     </div>
                                 </c:forEach>
                             </div><!-- .col-sm-6 -->
