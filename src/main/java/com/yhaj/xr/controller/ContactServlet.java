@@ -15,7 +15,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,19 +43,28 @@ public class ContactServlet extends BaseServlet {
 
     @Override
     public void save(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 设置编码
+        response.setContentType("text/json; charset=UTF-8");
+        Map<String, Object> result = new HashMap<>();
         String captchaCode = (String) request.getSession().getAttribute("captchaCode");
         if (!captchaCode.equals(request.getParameter("captcha"))) {
-            forwardError(request, response, "验证码提交错误");
-            return;
-        }
-        Contact contact = new Contact();
-        BeanUtils.populate(contact, request.getParameterMap());
-        if (service.save(contact)) {
-            response.sendRedirect(request.getContextPath() + "/contact/front");
+            //forwardError(request, response, "验证码提交错误");
+            result.put("success", false);
+            result.put("msg", "验证码不正确");
         } else {
-            request.setAttribute("error", "留言信息提交失败！");
-            request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
+            Contact contact = new Contact();
+            BeanUtils.populate(contact, request.getParameterMap());
+            if (service.save(contact)) {
+                //response.sendRedirect(request.getContextPath() + "/contact/front");
+                result.put("success", true);
+            } else {
+                //request.setAttribute("error", "留言信息提交失败！");
+                //request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
+                result.put("success", false);
+                result.put("msg", "留言信息提交失败！");
+            }
         }
+        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
     }
 
     public void read(HttpServletRequest request, HttpServletResponse response) throws Exception {

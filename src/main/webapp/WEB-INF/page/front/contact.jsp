@@ -54,7 +54,7 @@
                                         <label class="form-label" for="captcha">验证码</label>
                                         <div class="form-item-wrap">
                                             <input id="captcha" name="captcha" class="form-item" type="text" required>
-                                            <img src="${ctx}/user/captcha" alt="">
+                                            <img src="${ctx}/user/captcha" id="captchaCode" alt="">
                                         </div>
                                     </div>
                                     <div class="form-submit form-item-wrap">
@@ -72,5 +72,45 @@
         <%@ include file="common/foot.jsp" %>
     </div><!-- .crt-wrapper --><!-- Scripts -->
     <%@ include file="common/script.jsp" %>
+    <script>
+
+        addValidatorRules('.form-contact-form', function () {
+            // 先弹框
+            swal({
+                title: '正在提交留言中...',
+                text: ' ',
+                icon: 'info',
+                button: false,
+                closeOnClickOutside: false
+            })
+
+            // 利用AJAX发送请求给服务器
+            $.post('${ctx}/contact/save', {
+                name: $('[name=name]').val(),
+                email: $('[name=email]').val(),
+                subject: $('[name=subject]').val(),
+                comment: $('[name=comment]').val(),
+                captcha: $('[name=captcha]').val(),
+            }, function (data) {
+                if (data.success) {
+                    location.href = '${ctx}/contact/front'
+                } else {
+                    swal({
+                        title: "提示",
+                        text: data.msg,
+                        icon: 'error',
+                        dangerMode: true,
+                        buttons: false,
+                        timer: 1500
+                    })
+                }
+            }, 'json')
+            return false
+        })
+
+        $('#captchaCode').click(function () {
+            $(this).hide().attr('src', '${ctx}/user/captcha?time=' + new Date().getTime()).fadeIn()
+        })
+    </script>
 </body>
 </html>
