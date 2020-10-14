@@ -74,7 +74,7 @@
     <%@ include file="common/script.jsp" %>
     <script>
 
-        addValidatorRules('.form-contact-form', function () {
+        addValidatorRules('.contact-form', function () {
             // 先弹框
             swal({
                 title: '正在提交留言中...',
@@ -93,7 +93,15 @@
                 captcha: $('[name=captcha]').val(),
             }, function (data) {
                 if (data.success) {
-                    location.href = '${ctx}/contact/front'
+                    swal({
+                        title: "提示",
+                        text: data.msg,
+                        icon: 'success',
+                        dangerMode: true,
+                        buttons: false,
+                        timer: 1500
+                    })
+                    //location.href = '${ctx}/contact/front'
                 } else {
                     swal({
                         title: "提示",

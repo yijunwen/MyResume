@@ -57,6 +57,7 @@ public class ContactServlet extends BaseServlet {
             if (service.save(contact)) {
                 //response.sendRedirect(request.getContextPath() + "/contact/front");
                 result.put("success", true);
+                result.put("msg", "留言信息提交成功！");
             } else {
                 //request.setAttribute("error", "留言信息提交失败！");
                 //request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
