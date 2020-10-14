@@ -143,6 +143,7 @@ public class UserServlet extends BaseServlet {
                 String rememberme = request.getParameter("rememberme");
                 if ("true".equals(rememberme)) {
                     Cookie cookie = new Cookie("JSESSIONID", request.getSession().getId());
+                    cookie.setPath(getServletContext().getContextPath());
                     cookie.setMaxAge(3600 * 24 * 7);
                     response.addCookie(cookie);
                 }
